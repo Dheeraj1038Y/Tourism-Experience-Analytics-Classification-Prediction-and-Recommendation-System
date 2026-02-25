@@ -1,0 +1,94 @@
+PROJECT DOCUMENTATION:TOURISM PREDICTION & RECOMMENDATION SYSTEM
+
+ STEP 1 - DATA LOADING
+- Loaded dataset: Tourism_Master.csv
+- Purpose: Provide user, attraction, and rating information for model training.
+
+ STEP 2 - FEATURE SELECTION
+- Dropped non-predictive columns:
+  TransactionId, UserId, AttractionId, Attraction, AttractionAddress,
+  AttractionType, VisitModeName, CityName, Country, Region, Continent, Rating
+- Justification: These fields are identifiers or textual descriptors that cause
+  data leakage or redundancy. Rating is dropped from features since it is the target.
+
+ STEP 3 - REGRESSION MODEL
+- Target: Rating (numeric values).
+- Split: 80% training, 20% testing.
+- Model: RandomForestRegressor(random_state=42).
+- Justification: Captures non-linear relationships and feature interactions.
+- Output: regression_model.pkl
+
+ STEP 4 - CLASSIFICATION MODEL
+- Target: Binary satisfaction (Rating >= 3 → 1, else 0).
+- Split: 80% training, 20% testing.
+- Model: RandomForestClassifier(random_state=42).
+- Justification: Provides quick classification of user satisfaction.
+- Output: classification_model.pkl
+
+ STEP 5 - RECOMMENDATION MODEL
+- Constructed user-item matrix (UserId vs AttractionId, values = Rating).
+- Filled missing values with 0.
+- Model: NearestNeighbors(metric='cosine', algorithm='brute').
+- Justification: Cosine similarity identifies attractions similar to user preferences.
+- Output: recommendation_model.pkl, user_item_matrix.pkl
+
+ STEP 6 - MODEL PERSISTENCE
+- Saved all trained models and matrices using Joblib:
+  regression_model.pkl
+  classification_model.pkl
+  recommendation_model.pkl
+  user_item_matrix.pkl
+- Justification: Ensures reproducibility and avoids retraining during deployment.
+
+ STEP 7 - MODEL VERIFICATION
+- Reloaded models with joblib.load().
+- Verified:
+  Regression model → RandomForestRegressor(random_state=42)
+  Classification model → RandomForestClassifier(random_state=42)
+  Recommendation model → NearestNeighbors(algorithm='brute', metric='cosine')
+  User-item matrix → Shape (33530, 30)
+
+
+STREAMLIT APPLICATION INTERFACE
+
+
+INTERFACE OVERVIEW
+- Title: "Tourism Prediction & Recommendation System"
+- Sections:
+  1. Regression: Predict Attraction Rating
+  2. Classification: Satisfied vs Unsatisfied
+  3. Recommendation: Attractions for a User
+
+REGRESSION SECTION
+- Input: 13 numeric feature values (entered via number fields).
+- Action: Click "Predict Rating".
+- Output: Predicted numeric rating (e.g., 3.75).
+- Justification: Allows user to estimate attraction rating based on input features.
+
+ CLASSIFICATION SECTION
+- Input: 13 numeric feature values (entered via number fields).
+- Action: Click "Classify Satisfaction".
+- Output: "Satisfied" (if predicted class = 1) or "Unsatisfied" (if predicted class = 0).
+- Justification: Provides a quick binary classification of user satisfaction.
+
+RECOMMENDATION SECTION
+- Input: User ID (integer between 1 and 33530).
+- Action: Click "Recommend Attractions".
+- Output: List of recommended Attraction IDs (nearest neighbors).
+- Justification: Suggests attractions similar to those rated by the selected user.
+
+USER INSTRUCTIONS
+- For regression/classification → Enter 13 values (e.g., 1,0,3,2,5,0,1,4,2,3,1,0,2).
+- For recommendation → Enter a valid User ID (e.g., 1, 25, 100).
+- Outputs are displayed instantly in the Streamlit interface.
+
+PROJECT JUSTIFICATION
+
+- Regression model predicts exact attraction ratings.
+- Classification model predicts satisfaction levels (Satisfied vs Unsatisfied).
+- Recommendation model suggests attractions based on user similarity.
+- Saving models as .pkl files ensures modularity, reproducibility, and deployment readiness.
+- Streamlit app integrates all models into a user-friendly interface with clear inputs and outputs.
+
+
+END 
